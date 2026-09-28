@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="web_standard" name="shell-type">
+  <title>Avanzzia — Tu negocio simple en internet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+  <style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+      body {
+        overscroll-behavior-y: none;
+      }
+      main > :first-child {
+        margin-top: 0 !important;
+      }
+      main > :last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+    
+    /* Scroll Progress Indicator */
+    #scroll-progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, #47607e, #bfd9fd, #d2e4ff);
+      z-index: 100;
+      transition: width 0.08s ease-out;
+    }
+
+    /* Scroll Reveal System */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-on-scroll.is-revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-slide-left {
+      opacity: 0;
+      transform: translateX(-32px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-slide-left.is-revealed {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-slide-right {
+      opacity: 0;
+      transform: translateX(32px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-slide-right.is-revealed {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Image Scroll Reveal & Parallax */
+    .reveal-image-container {
+      overflow: hidden;
+      position: relative;
+    }
+    .reveal-image {
+      opacity: 0;
+      transform: scale(1.12);
+      filter: blur(6px);
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform, filter;
+    }
+    .reveal-image.is-revealed {
+      opacity: 1;
+      transform: scale(1.04);
+      filter: blur(0px);
+    }
+
+    /* Pop / Badge Reveal */
+    .reveal-pop {
+      opacity: 0;
+      transform: translateY(18px) scale(0.96);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-pop.is-revealed {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Stagger Delays */
+    .delay-75 { transition-delay: 75ms; }
+    .delay-150 { transition-delay: 150ms; }
+    .delay-225 { transition-delay: 225ms; }
+    .delay-300 { transition-delay: 300ms; }
+    .delay-400 { transition-delay: 400ms; }
+
+    /* Nav active indicator */
+    .nav-link {
+      position: relative;
+    }
+    .nav-link.active-nav {
+      color: #ffffff !important;
+    }
+    .nav-link.active-nav::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #d2e4ff;
+      border-radius: 1px;
+    }
+
+    /* Floating WhatsApp widget transitions */
+    #floating-wa {
+      opacity: 0;
+      transform: translateY(24px) scale(0.95);
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #floating-wa.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* Subtle pulse animation */
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .status-pulse {
+      animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      "darkMode": "class",
+      "theme": {
+        "extend": {
+          "colors": {
+            "tertiary": "#001226",
+            "on-surface": "#1a1c19",
+            "surface-container-highest": "#e2e3de",
+            "surface-dim": "#d9dad5",
+            "primary": "#051124",
+            "tertiary-fixed": "#d2e4ff",
+            "on-primary-fixed": "#101c2f",
+            "inverse-primary": "#bcc7e1",
+            "surface": "#f9faf5",
+            "on-primary-fixed-variant": "#3c475c",
+            "surface-container-lowest": "#ffffff",
+            "primary-container": "#1b263a",
+            "surface-tint": "#545f75",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed": "#001d36",
+            "on-secondary-container": "#465f7d",
+            "on-secondary-fixed-variant": "#2f4865",
+            "tertiary-fixed-dim": "#b3c8e7",
+            "on-secondary": "#ffffff",
+            "outline-variant": "#c5c6cd",
+            "surface-container": "#edeee9",
+            "on-primary-container": "#828da6",
+            "surface-bright": "#f9faf5",
+            "outline": "#75777d",
+            "on-tertiary-fixed": "#041c34",
+            "on-tertiary-container": "#7a8fac",
+            "primary-fixed-dim": "#bcc7e1",
+            "inverse-on-surface": "#f0f1ec",
+            "secondary-container": "#bfd9fd",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#334862",
+            "on-surface-variant": "#45474d",
+            "on-tertiary": "#ffffff",
+            "on-background": "#1a1c19",
+            "secondary-fixed": "#d2e4ff",
+            "surface-variant": "#e2e3de",
+            "surface-container-high": "#e8e9e4",
+            "secondary-fixed-dim": "#afc9eb",
+            "secondary": "#47607e",
+            "on-primary": "#ffffff",
+            "background": "#f9faf5",
+            "inverse-surface": "#2f312e",
+            "primary-fixed": "#d7e2fe",
+            "surface-container-low": "#f3f4ef",
+            "error-container": "#ffdad6",
+            "tertiary-container": "#10273f",
+            "on-error": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "space-xl": "2.5rem",
+            "space-3xl": "6rem",
+            "gutter": "1.5rem",
+            "margin": "2rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "gutter-desktop": "2rem",
+            "margin-mobile": "1.25rem",
+            "space-2xl": "4rem",
+            "gutter-mobile": "1rem",
+            "space-xs": "0.25rem",
+            "margin-desktop": "4rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Newsreader", "serif"],
+            "display-lg": ["Newsreader", "serif"],
+            "label-sm": ["Manrope", "sans-serif"],
+            "headline-lg": ["Newsreader", "serif"],
+            "body-md": ["Manrope", "sans-serif"],
+            "subhead-lg": ["Newsreader", "serif"],
+            "body-sm": ["Manrope", "sans-serif"],
+            "display-lg-mobile": ["Newsreader", "serif"],
+            "headline-sm": ["Newsreader", "serif"],
+            "body-lg": ["Manrope", "sans-serif"],
+            "label-md": ["Manrope", "sans-serif"],
+            "headline-lg-mobile": ["Newsreader", "serif"]
+          },
+          "fontSize": {
+            "headline-md": ["2rem", { "lineHeight": "2.5rem", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "display-lg": ["4.5rem", { "lineHeight": "4.75rem", "letterSpacing": "-0.025em", "fontWeight": "400" }],
+            "label-sm": ["0.6875rem", { "lineHeight": "0.875rem", "letterSpacing": "0.1em", "fontWeight": "600" }],
+            "headline-lg": ["3rem", { "lineHeight": "3.5rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "body-md": ["0.9375rem", { "lineHeight": "1.5rem", "letterSpacing": "0em", "fontWeight": "400" }],
+            "subhead-lg": ["1.25rem", { "lineHeight": "1.75rem", "fontWeight": "400" }],
+            "body-sm": ["0.8125rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "display-lg-mobile": ["2.75rem", { "lineHeight": "3rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "headline-sm": ["1.375rem", { "lineHeight": "1.75rem", "letterSpacing": "0em", "fontWeight": "500" }],
+            "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "label-md": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.08em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["2rem", { "lineHeight": "2.35rem", "letterSpacing": "-0.015em", "fontWeight": "400" }]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-fixed">
+
+  <!-- TOP PROGRESS BAR -->
+  <div id="scroll-progress-bar"></div>
+
+  <!-- TOP EDITORIAL HEADER & METADATA BAR -->
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-[#0E1B2A]/95 backdrop-blur-md border-b border-surface-variant/20 transition-all duration-300">
+    <div class="h-20 w-full px-gutter md:px-gutter-desktop max-w-[1400px] mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-space-xl">
+        <a class="flex flex-col tracking-wider group" data-path="inicio" href="#inicio">
+          <span class="font-headline-sm text-headline-sm text-on-primary uppercase leading-tight font-medium tracking-wide">Avanzzia</span>
+          <span class="font-label-sm text-label-sm text-[#788DAA] uppercase tracking-widest text-[10px]">Tu negocio simple en internet</span>
+        </a>
+        <a href="#filosofia" class="hidden xl:flex items-center gap-2 pl-space-lg border-l border-white/10 text-xs text-[#788DAA] hover:text-secondary-fixed transition-colors tracking-wider uppercase">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span>
+          <span>cómo trabajamos</span>
+        </a>
+      </div>
+      
+      <nav class="hidden lg:flex items-center gap-space-xl" data-active-classes="text-on-primary font-semibold">
+        <a class="font-label-md text-label-md uppercase tracking-wider text-[#788DAA] hover:text-on-primary transition-colors nav-link" data-section="filosofia" href="#filosofia">Cómo pensamos</a>
+        <a class="font-label-md text-label-md uppercase tracking-wider text-[#788DAA] hover:text-on-primary transition-colors nav-link" data-section="metodologia" href="#metodologia">Paso a paso</a>
+        <a class="font-label-md text-label-md uppercase tracking-wider text-[#788DAA] hover:text-on-primary transition-colors nav-link" data-section="servicios" href="#servicios">Servicios</a>
+      </nav>
+
+      <div class="flex items-center gap-space-md">
+        <a class="hidden sm:inline-flex items-center justify-center bg-[#1B263A] border border-[#415A78]/40 text-inverse-on-surface px-space-md py-2.5 font-label-md text-label-md uppercase tracking-wider hover:bg-[#415A78] hover:text-on-primary transition-all shadow-sm" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">
+          Hablemos por WhatsApp
+        </a>
+        <img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-white/10 hidden md:block" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCowI0HcCZFwxV4pCrS9KQp4pTFCTlU30kRkIdtn7Xsf3G-3xBNk4gMhl9lLqHSvTRm-1ST98EkyFwSdWM1Fbg1Bx6nAGSgu3Y_tSonWraxNLF_qOh1cJLW3fCZA2YT5830x6Gleb7KkhX4SWN320ByRm-_EdgCYh9Z3RXDy7HG-BfITrJZ-DSpjQJBP1bHAwId8nWhd2fvZpH7AprQP0c-NiZ3LFTOpIzHpGcI5N1tPseTRryRNK5oKw">
+        
+        <!-- Mobile Menu Hamburger Button -->
+        <button id="mobile-menu-btn" class="lg:hidden p-2 text-surface hover:text-secondary-fixed transition-colors flex items-center justify-center focus:outline-none" aria-label="Abrir menú">
+          <span class="material-symbols-outlined text-2xl" id="menu-icon">menu</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-nav" class="hidden lg:hidden bg-[#0E1B2A] border-b border-white/10 px-gutter py-space-lg flex-col gap-space-md shadow-2xl">
+      <a class="font-label-md text-label-md uppercase tracking-wider text-[#788DAA] hover:text-on-primary py-2.5 border-b border-white/5 transition-colors mobile-nav-link" href="#inicio">Inicio</a>
+      <a class="font-label-md text-label-md uppercase tracking-wider text-[#788DAA] hover:text-on-primary py-2.5 border-b border-white/5 transition-colors mobile-nav-link" href="#filosofia">Cómo pensamos</a>
+      <a class="font-label-md text-label-md uppercase tracking-wider text-[#788DAA] hover:text-on-primary py-2.5 border-b border-white/5 transition-colors mobile-nav-link" href="#metodologia">Paso a paso</a>
+      <a class="font-label-md text-label-md uppercase tracking-wider text-[#788DAA] hover:text-on-primary py-2.5 border-b border-white/5 transition-colors mobile-nav-link" href="#servicios">Servicios</a>
+      <a class="mt-space-sm inline-flex items-center justify-center bg-secondary text-on-primary px-space-md py-3 font-label-md text-label-md uppercase tracking-wider text-center transition-all hover:bg-[#415A78]" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">
+        <span>Hablemos por WhatsApp</span>
+        <span class="material-symbols-outlined text-sm ml-2">arrow_forward</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="w-full pt-20 bg-surface">
+    <div class="flex flex-col w-full">
+
+      <!-- RADICAL SPLIT-SCREEN EDITORIAL BROADSHEET HERO -->
+      <section id="inicio" class="w-full border-b border-surface-variant/50 bg-[#E0E1DC]/30">
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-5rem)] border-x border-surface-variant/40">
+          
+          <!-- Header meta dossier banner -->
+          <div class="lg:col-span-7 p-space-lg md:p-space-2xl lg:p-space-3xl flex flex-col justify-between bg-surface relative">
+            <div class="flex flex-col">
+              <h1 class="reveal-on-scroll font-display-lg text-4xl sm:text-5xl lg:text-[4.75rem] text-primary leading-[1.04] tracking-tight mb-space-xl">
+                Tu negocio en internet,<br>
+                <span class="italic font-subhead-lg text-4xl sm:text-5xl lg:text-[4.75rem] font-normal text-secondary block mt-1">claro, fácil y ordenado.</span>
+              </h1>
+              <div class="reveal-on-scroll delay-150 pl-space-md border-l-2 border-[#415A78] my-space-md">
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl leading-relaxed">
+                  Si vendés por WhatsApp o Instagram y sentís que vivís corriendo, te armamos una página web o tienda online que tus clientes entiendan al instante y que puedas manejar vos mismo sin depender de nadie.
+                </p>
+              </div>
+            </div>
+            <div class="reveal-on-scroll delay-225 pt-space-xl mt-space-lg border-t border-surface-variant/30 flex flex-col sm:flex-row items-start sm:items-center gap-space-lg">
+              <a class="bg-primary text-surface px-space-xl py-4 font-label-md text-label-md uppercase tracking-wider hover:bg-secondary transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-space-sm group" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">
+                <span>Charlemos por WhatsApp</span>
+                <span class="material-symbols-outlined text-body-md group-hover:translate-x-1.5 transition-transform">arrow_forward</span>
+              </a>
+              <div class="flex items-center gap-space-xs text-on-surface-variant bg-surface-container-low px-space-md py-space-sm border border-surface-variant/40">
+                <span class="material-symbols-outlined text-body-sm text-secondary">favorite</span>
+                <span class="font-body-sm text-body-sm font-medium">Sin palabras raras ni compromisos.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Asymmetric Bento Hero Composition -->
+          <div class="lg:col-span-5 bg-[#0E1B2A] relative flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-surface-variant/40 overflow-hidden min-h-[500px] lg:min-h-full">
+            <!-- Bento Tile 1: Header metadata -->
+            <div class="p-space-md bg-[#1B263A]/90 backdrop-blur-sm border-b border-white/10 flex items-center justify-between text-on-primary-container z-20">
+              <span class="font-label-sm text-label-sm uppercase tracking-widest text-[#788DAA]">CÓMO TE AYUDAMOS DÍA A DÍA</span>
+              <span class="font-label-sm text-label-sm uppercase text-secondary-fixed">Tranquilidad total</span>
+            </div>
+
+            <!-- Bento Tile 2: Workspace image with scroll parallax & mask reveal -->
+            <div class="relative flex-1 w-full overflow-hidden flex items-center justify-center min-h-[380px] reveal-image-container group">
+              <img class="reveal-image parallax-img w-full h-full object-cover object-center filter saturate-[0.9] contrast-[1.05]" data-parallax-speed="0.08" data-alt="A high-end editorial workspace showing laptop screens with elegant ecommerce store interfaces and clean typography on desk, deep navy and warm stone tones" src="https://lh3.googleusercontent.com/aida/AEtjO1UnyOfWdeJ3BAM9W0id4EiayQMH2EOLBcO35R4BSsUVlnqgCjHCDIGmefBNYFj2v_BniCSKDvXg_tE-JmuDFvzPlkPO23Xw0dDv0Gpsl-tezRy2KiczUzJPrnAcYp-ZQPijkqG4OqJ4uw1VA4SelA5m12r1Djpu37aJp40RxTcmYIgCc-3Mrwe7tygx-JQt7beblgsVcT8Zn8c_PCQmoqhdWEu3clXNdMXfwLMHbiKOmUmN2rtI67gp8re6">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0E1B2A] via-[#0E1B2A]/40 to-transparent pointer-events-none"></div>
+              
+              <!-- Vertical Process Steps Ticker Bento Tile -->
+              <div class="reveal-pop delay-300 absolute bottom-space-lg left-space-md right-space-md bg-[#0E1B2A]/90 backdrop-blur-md p-space-md border border-white/15 text-on-primary shadow-2xl">
+                <div class="flex items-center justify-between mb-space-xs pb-space-xs border-b border-white/10">
+                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-[#788DAA]">Nuestra promesa</span>
+                  <span class="font-label-sm text-label-sm text-secondary-fixed font-semibold">100% Humano</span>
+                </div>
+                <p class="font-body-sm text-body-sm text-[#bcc7e1] italic font-subhead-lg text-[0.95rem] leading-relaxed">
+                  "Primero entendemos cómo atendés a tus clientes en el día a día. Después lo dejamos todo prolijo y funcionando."
+                </p>
+              </div>
+            </div>
+
+            <!-- Bottom Architectural Tri-Feature Badges -->
+            <div class="grid grid-cols-3 bg-[#1B263A] divide-x divide-white/10 border-t border-white/10 z-20">
+              <div class="p-space-sm text-center hover:bg-white/5 transition-colors">
+                <span class="font-label-sm text-label-sm text-on-primary-container block mb-0.5">Diseño</span>
+                <span class="font-headline-sm text-headline-sm text-on-primary">Simple</span>
+              </div>
+              <div class="p-space-sm text-center hover:bg-white/5 transition-colors">
+                <span class="font-label-sm text-label-sm text-on-primary-container block mb-0.5">Enredos</span>
+                <span class="font-headline-sm text-headline-sm text-secondary-fixed-dim">Cero</span>
+              </div>
+              <div class="p-space-sm text-center hover:bg-white/5 transition-colors">
+                <span class="font-label-sm text-label-sm text-on-primary-container block mb-0.5">El control</span>
+                <span class="font-headline-sm text-headline-sm text-on-primary">Es tuyo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HORIZONTAL BROADSHEET TICKER / 3 CORE PILLARS BAR -->
+      <section id="filosofia" class="w-full bg-[#1B263A] text-on-primary border-b border-[#415A78]/30">
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
+          <div class="reveal-on-scroll delay-75 p-space-lg flex flex-col justify-between hover:bg-[#415A78]/15 transition-colors group">
+            <div class="flex items-center justify-between text-[#788DAA] mb-space-sm">
+              <span class="font-label-sm text-label-sm uppercase tracking-widest">Paso 01</span>
+              <span class="material-symbols-outlined text-body-lg text-secondary-fixed group-hover:scale-110 transition-transform">hearing</span>
+            </div>
+            <div>
+              <h4 class="font-headline-sm text-headline-sm text-on-primary mb-space-xs">Primero escuchamos</h4>
+              <p class="font-body-sm text-body-sm text-[#bcc7e1]">Antes de hacer nada, charlamos para entender qué vendés y qué necesitás hoy.</p>
+            </div>
+          </div>
+          <div class="reveal-on-scroll delay-150 p-space-lg flex flex-col justify-between hover:bg-[#415A78]/15 transition-colors group">
+            <div class="flex items-center justify-between text-[#788DAA] mb-space-sm">
+              <span class="font-label-sm text-label-sm uppercase tracking-widest">Paso 02</span>
+              <span class="material-symbols-outlined text-body-lg text-secondary-fixed group-hover:scale-110 transition-transform">sentiment_satisfied</span>
+            </div>
+            <div>
+              <h4 class="font-headline-sm text-headline-sm text-on-primary mb-space-xs">Fácil para tus clientes</h4>
+              <p class="font-body-sm text-body-sm text-[#bcc7e1]">Hacemos páginas simples donde la gente encuentra rápido lo que busca y compra contenta.</p>
+            </div>
+          </div>
+          <div class="reveal-on-scroll delay-225 p-space-lg flex flex-col justify-between hover:bg-[#415A78]/15 transition-colors group">
+            <div class="flex items-center justify-between text-[#788DAA] mb-space-sm">
+              <span class="font-label-sm text-label-sm uppercase tracking-widest">Paso 03</span>
+              <span class="material-symbols-outlined text-body-lg text-secondary-fixed group-hover:scale-110 transition-transform">lock_open</span>
+            </div>
+            <div>
+              <h4 class="font-headline-sm text-headline-sm text-on-primary mb-space-xs">Sos libre</h4>
+              <p class="font-body-sm text-body-sm text-[#bcc7e1]">Te enseñamos a usar todo paso a paso para que cambies precios o fotos sin tener que pedir permiso.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: EDITORIAL DEBATE (Lo que suele pasar vs El camino en 4 pasos simples) -->
+      <section id="metodologia" class="w-full bg-surface py-space-3xl px-gutter md:px-gutter-desktop border-b border-surface-variant/40">
+        <div class="max-w-[1400px] mx-auto flex flex-col gap-space-2xl">
+          <!-- Editorial Section Header -->
+          <div class="reveal-on-scroll grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-end pb-space-lg border-b border-surface-variant/40">
+            <div class="lg:col-span-8">
+              <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold block mb-space-xs">Una forma más fácil de trabajar</span>
+              <h2 class="font-headline-lg text-headline-lg md:text-[3.25rem] text-primary leading-tight">Del lío de todos los días a tener todo ordenado.</h2>
+            </div>
+            <div class="lg:col-span-4 lg:pl-space-lg lg:border-l border-surface-variant/40">
+              <p class="font-body-md text-body-md text-on-surface-variant">Muchos lugares te venden páginas difíciles que después nadie sabe usar. Nosotros preferimos las cosas simples que de verdad te alivian el día.</p>
+            </div>
+          </div>
+
+          <!-- Broadsheet Dual-Column Comparative Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl">
+            <!-- Left: The Frustration (Editorial News Column) -->
+            <div class="reveal-slide-left lg:col-span-5 bg-surface-container-low p-space-xl border border-surface-variant/60 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-space-sm mb-space-md text-error pb-space-sm border-b border-error/20">
+                  <span class="material-symbols-outlined text-headline-sm">sentiment_dissatisfied</span>
+                  <span class="font-label-sm text-label-sm uppercase tracking-widest font-semibold">Lo que suele pasar</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-primary mb-space-md">El problema de siempre</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant mb-space-lg italic font-subhead-lg text-lg">
+                  Empezás vendiendo con ganas, pero de pronto pasás todo el día respondiendo lo mismo por mensajes y no te queda tiempo para nada más.
+                </p>
+                <div class="space-y-space-md">
+                  <div class="reveal-on-scroll delay-75 bg-surface-container-lowest p-space-md border-l-4 border-error shadow-xs hover:translate-x-1 transition-transform">
+                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-error block mb-space-xs font-bold">Cansancio 01</span>
+                    <p class="font-body-sm text-body-sm text-primary font-medium">Responder 50 veces al día cuánto sale algo, qué colores hay o cómo se paga.</p>
+                  </div>
+                  <div class="reveal-on-scroll delay-150 bg-surface-container-lowest p-space-md border-l-4 border-error shadow-xs hover:translate-x-1 transition-transform">
+                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-error block mb-space-xs font-bold">Cansancio 02</span>
+                    <p class="font-body-sm text-body-sm text-primary font-medium">Tener una página que te cobraron cara pero que a tus clientes les resulta confusa.</p>
+                  </div>
+                  <div class="reveal-on-scroll delay-225 bg-surface-container-lowest p-space-md border-l-4 border-error shadow-xs hover:translate-x-1 transition-transform">
+                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-error block mb-space-xs font-bold">Cansancio 03</span>
+                    <p class="font-body-sm text-body-sm text-primary font-medium">Tener que llamar a un programador cada vez que querés cambiar un precio o subir una foto.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="pt-space-xl mt-space-lg border-t border-surface-variant/40">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-medium">Nosotros te ayudamos a que todo sea más fácil y vivas con menos estrés.</span>
+              </div>
+            </div>
+
+            <!-- Right: The Method (Deep Midnight Ledger in 4 Steps) -->
+            <div class="reveal-slide-right lg:col-span-7 bg-[#0E1B2A] text-on-primary p-space-xl border border-[#415A78]/40 flex flex-col justify-between shadow-xl">
+              <div>
+                <div class="flex items-center justify-between mb-space-md text-[#788DAA] pb-space-sm border-b border-white/10">
+                  <span class="font-label-sm text-label-sm uppercase tracking-widest font-semibold text-secondary-fixed">El camino juntos</span>
+                  <span class="font-label-sm text-label-sm uppercase">Pasos 01 — 04</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-on-primary mb-space-xl">El camino en 4 pasos simples</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-lg">
+                  <div class="reveal-on-scroll delay-75 bg-[#1B263A] p-space-md border border-white/5 relative hover:border-secondary-fixed/40 transition-colors group">
+                    <span class="font-display-lg text-4xl text-secondary-fixed block mb-space-xs font-headline-md group-hover:scale-105 transition-transform">01</span>
+                    <h4 class="font-headline-sm text-headline-sm text-on-primary mb-space-xs">Charlamos y entendemos</h4>
+                    <p class="font-body-sm text-body-sm text-[#bcc7e1]">Nos contás qué vendés, quiénes te compran y qué te quita tiempo hoy.</p>
+                  </div>
+                  <div class="reveal-on-scroll delay-150 bg-[#1B263A] p-space-md border border-white/5 relative hover:border-secondary-fixed/40 transition-colors group">
+                    <span class="font-display-lg text-4xl text-secondary-fixed block mb-space-xs font-headline-md group-hover:scale-105 transition-transform">02</span>
+                    <h4 class="font-headline-sm text-headline-sm text-on-primary mb-space-xs">Lo ordenamos juntos</h4>
+                    <p class="font-body-sm text-body-sm text-[#bcc7e1]">Acomodamos tus fotos, tus productos y tus precios para que se entienda todo de una.</p>
+                  </div>
+                  <div class="reveal-on-scroll delay-225 bg-[#1B263A] p-space-md border border-white/5 relative hover:border-secondary-fixed/40 transition-colors group">
+                    <span class="font-display-lg text-4xl text-secondary-fixed block mb-space-xs font-headline-md group-hover:scale-105 transition-transform">03</span>
+                    <h4 class="font-headline-sm text-headline-sm text-on-primary mb-space-xs">Armamos tu tienda o página</h4>
+                    <p class="font-body-sm text-body-sm text-[#bcc7e1]">Dejamos todo listo y funcionando para que se vea lindo en el celular y en la compu.</p>
+                  </div>
+                  <div class="reveal-on-scroll delay-300 bg-[#1B263A] p-space-md border border-white/5 relative hover:border-secondary-fixed/40 transition-colors group">
+                    <span class="font-display-lg text-4xl text-secondary-fixed block mb-space-xs font-headline-md group-hover:scale-105 transition-transform">04</span>
+                    <h4 class="font-headline-sm text-headline-sm text-on-primary mb-space-xs">Te enseñamos con paciencia</h4>
+                    <p class="font-body-sm text-body-sm text-[#bcc7e1]">Nos sentamos con vos y te mostramos cómo usarla. Es tan fácil como mandar un mensaje.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-space-xl pt-space-md border-t border-white/10 flex items-center justify-between text-[#788DAA]">
+                <span class="font-body-sm text-body-sm text-secondary-fixed">En pocas semanas tenés todo funcionando y ordenado.</span>
+                <span class="material-symbols-outlined text-secondary-fixed">check_circle</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MAGAZINE TRIPTYCH: SERVICE CARDS WITH OVERSIZED BORDER NUMERALS -->
+          <div id="servicios" class="grid grid-cols-1 md:grid-cols-3 gap-space-lg pt-space-md">
+            <!-- Card 01 -->
+            <div class="reveal-on-scroll delay-75 bg-surface-container-lowest p-space-xl border border-surface-variant/60 flex flex-col justify-between relative overflow-hidden group hover:border-[#415A78] hover:shadow-lg transition-all duration-300">
+              <div class="absolute -top-4 -right-2 text-7xl font-headline-md text-surface-container font-light select-none group-hover:text-secondary-fixed/50 group-hover:scale-105 transition-all">01</div>
+              <div>
+                <h4 class="font-headline-sm text-headline-sm text-primary mb-space-xs">Tu Tienda Online lista para vender</h4>
+                <p class="font-label-sm text-label-sm uppercase tracking-wider text-secondary mb-space-sm font-semibold">Para productos físicos</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md leading-relaxed">Ideal si vendés ropa, accesorios o cosas lindas. Tus clientes eligen lo que les gusta, pagan con tarjeta y eligen el envío solos. ¡Te llega el pedido listo para despachar!</p>
+              </div>
+              <div class="space-y-space-xs text-on-surface pt-space-md border-t border-surface-variant/40">
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Cobros automáticos</span></div>
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Envíos fáciles</span></div>
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Se ve genial en el celular</span></div>
+              </div>
+            </div>
+            
+            <!-- Card 02 -->
+            <div class="reveal-on-scroll delay-150 bg-surface-container-lowest p-space-xl border border-surface-variant/60 flex flex-col justify-between relative overflow-hidden group hover:border-[#415A78] hover:shadow-lg transition-all duration-300">
+              <div class="absolute -top-4 -right-2 text-7xl font-headline-md text-surface-container font-light select-none group-hover:text-secondary-fixed/50 group-hover:scale-105 transition-all">02</div>
+              <div>
+                <h4 class="font-headline-sm text-headline-sm text-primary mb-space-xs">Ordenar tu tienda si tenés muchos productos</h4>
+                <p class="font-label-sm text-label-sm uppercase tracking-wider text-secondary mb-space-sm font-semibold">Para catálogos grandes</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md leading-relaxed">Si ya tenés una tienda pero está desordenada o te marea la cantidad de cosas, te la dejamos impecable, prolija y fácil de recorrer para que nadie se pierda.</p>
+              </div>
+              <div class="space-y-space-xs text-on-surface pt-space-md border-t border-surface-variant/40">
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Fotos y precios prolijos</span></div>
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Búsqueda fácil para tu cliente</span></div>
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Sin enredos visuales</span></div>
+              </div>
+            </div>
+
+            <!-- Card 03 -->
+            <div class="reveal-on-scroll delay-225 bg-surface-container-lowest p-space-xl border border-surface-variant/60 flex flex-col justify-between relative overflow-hidden group hover:border-[#415A78] hover:shadow-lg transition-all duration-300">
+              <div class="absolute -top-4 -right-2 text-7xl font-headline-md text-surface-container font-light select-none group-hover:text-secondary-fixed/50 group-hover:scale-105 transition-all">03</div>
+              <div>
+                <h4 class="font-headline-sm text-headline-sm text-primary mb-space-xs">Página linda para tu profesión o servicio</h4>
+                <p class="font-label-sm text-label-sm uppercase tracking-wider text-secondary mb-space-sm font-semibold">Psicólogos, profesores, oficios</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md leading-relaxed">Si sos psicólogo, abogado, profe o brindás un servicio: una página clara para contar quién sos, qué hacés y con un botón directo para que te escriban a WhatsApp.</p>
+              </div>
+              <div class="space-y-space-xs text-on-surface pt-space-md border-t border-surface-variant/40">
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Textos claros que generan confianza</span></div>
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Botón directo a tu WhatsApp</span></div>
+                <div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-body-md text-secondary">check</span><span>Tu negocio bien presentado</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: SOLUCIONES & CASOS PRÁCTICOS WITH CANDID PORTRAIT -->
+      <section class="w-full bg-[#E0E1DC]/30 py-space-3xl px-gutter md:px-gutter-desktop border-b border-surface-variant/40">
+        <div class="max-w-[1400px] mx-auto flex flex-col gap-space-2xl">
+          <div class="reveal-on-scroll flex flex-col gap-space-xs max-w-3xl">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold">Hecho a tu medida</span>
+            <h2 class="font-headline-lg text-headline-lg md:text-[3.25rem] text-primary leading-tight">Trabajar con nosotros es fácil y sin vueltas</h2>
+          </div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl">
+            <!-- Left: Editorial Narrative & Comparative Cards + Bold Stats -->
+            <div class="reveal-slide-left lg:col-span-6 flex flex-col justify-between gap-space-xl">
+              <div class="bg-surface-container-lowest p-space-xl border border-surface-variant/60 shadow-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-space-xs font-semibold">Antes vs Con nosotros</span>
+                <h3 class="font-headline-md text-headline-md text-primary mb-space-md">Pensado para hacerte la vida más linda</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">No inventamos cosas raras. Creamos soluciones prácticas que te ahorran horas y horas de trabajo.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md mb-space-lg">
+                  <div class="bg-surface-container-low p-space-md border border-surface-variant/40">
+                    <div class="flex items-center gap-space-xs text-error mb-space-xs">
+                      <span class="material-symbols-outlined text-body-sm">close</span>
+                      <span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">Antes de conocernos</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant italic">"Vivir pegado al celular respondiendo '¿precio?', anotando pedidos en un cuaderno y con miedo de no dar abasto."</p>
+                  </div>
+                  <div class="bg-[#0E1B2A] text-on-primary p-space-md border border-[#415A78]/40">
+                    <div class="flex items-center gap-space-xs text-secondary-fixed mb-space-xs">
+                      <span class="material-symbols-outlined text-body-sm">check_circle</span>
+                      <span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">Con Avanzzia</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-[#bcc7e1] italic">"Tus clientes ven los precios, eligen y te compran solos. Vos recibís el pedido ordenado y recuperás tiempo para tu vida."</p>
+                  </div>
+                </div>
+                <div class="p-space-md bg-surface-container-low border border-surface-variant/40 flex items-start gap-space-md">
+                  <span class="material-symbols-outlined text-secondary text-headline-sm mt-0.5">sentiment_very_satisfied</span>
+                  <div>
+                    <h5 class="font-headline-sm text-subhead-lg text-primary mb-space-xs font-semibold">Tu independencia ante todo</h5>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Te enseñamos todo con videos cortitos y claros. Nunca más vas a depender de nadie para cambiar un precio o subir una novedad.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bold Numeric Broadsheet Proof Bar with dynamic counter -->
+              <div id="stats-counter" class="bg-surface-container-lowest p-space-lg border border-surface-variant/60 shadow-sm grid grid-cols-3 divide-x divide-surface-variant/60 text-center">
+                <div class="px-space-xs">
+                  <span class="font-display-lg text-4xl md:text-5xl font-headline-md text-primary block leading-none mb-1 stat-counter" data-target="35" data-prefix="+">+35</span>
+                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-medium">Negocios felices</span>
+                </div>
+                <div class="px-space-xs">
+                  <span class="font-display-lg text-4xl md:text-5xl font-headline-md text-primary block leading-none mb-1 stat-counter" data-target="0" data-prefix="">0</span>
+                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-medium">Palabras raras</span>
+                </div>
+                <div class="px-space-xs">
+                  <span class="font-display-lg text-4xl md:text-5xl font-headline-md text-primary block leading-none mb-1 stat-counter" data-target="100" data-suffix="%">100%</span>
+                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-medium">Tuyo y bajo tu control</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Candid Editorial Portrait & Direct Contact Box -->
+            <div class="reveal-slide-right lg:col-span-6 flex flex-col gap-space-lg">
+              <!-- Featured Editorial Portrait Frame -->
+              <div class="relative bg-surface-container-lowest p-space-md border border-surface-variant/60 shadow-md flex flex-col">
+                <div class="relative aspect-[16/11] w-full overflow-hidden bg-surface-container mb-space-md reveal-image-container group">
+                  <img class="reveal-image parallax-img w-full h-full object-cover object-top" data-parallax-speed="0.06" data-alt="Warm, inviting portrait of a friendly creative consultant smiling warmly beside a laptop at a bright tidy desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABzADecV-zW6qjo_Uv-zAzKzI-o9m5QtuEQivt5PHvMfKFNiCCHvWGI0LKWI4Mv8jSq0s1B1SEbM3LGHx50vzBF5TQVass45ZBXG-CmUrF1mJs5LrP-6HkL69_SJGkYOXb7lpxhz3UW11FzAzmbjUNKfze9zvXyqPO5Cno9dinM6mPVUdRlAbSxThAQ-st_uo5OykTfnFozLSg0EGK6naIHkFsjQLROo0SDt4HLl5utFNyeLyIjRRcHQ">
+                  
+                  <!-- Floating Card Overlay on Portrait -->
+                  <div class="reveal-pop delay-225 absolute bottom-space-md left-space-md right-space-md bg-surface/95 backdrop-blur-md p-space-md border border-surface-variant/50 shadow-xl">
+                    <div class="flex items-center gap-space-xs text-secondary mb-space-xs">
+                      <span class="material-symbols-outlined text-body-sm">help</span>
+                      <span class="font-label-sm text-label-sm uppercase tracking-widest font-semibold">Charla inicial gratuita</span>
+                    </div>
+                    <h4 class="font-headline-sm text-headline-sm text-primary mb-space-xs">Te asesoramos sin costo</h4>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Nos contás tu caso y te decimos con total sinceridad qué te conviene hacer, sin venderte cosas de más.</p>
+                  </div>
+                </div>
+
+                <!-- Dark Midnight Callout Card -->
+                <div class="bg-[#0E1B2A] text-on-primary p-space-lg border border-[#415A78]/30 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between mb-space-sm pb-space-xs border-b border-white/10">
+                      <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary-fixed">Estamos para escucharte</span>
+                      <span class="inline-flex items-center gap-1.5 text-label-sm text-secondary-fixed">
+                        <span class="w-2 h-2 rounded-full bg-secondary-fixed status-pulse"></span>
+                        En línea
+                      </span>
+                    </div>
+                    <h3 class="font-headline-md text-subhead-lg text-on-primary mb-space-xs">¿Querés que charlemos de tu negocio?</h3>
+                    <p class="font-body-sm text-body-sm text-[#bcc7e1] mb-space-lg">Escribinos un mensajito contándonos qué hacés. Te responde una persona de carne y hueso, con toda la paciencia del mundo.</p>
+                  </div>
+                  <div class="flex flex-col sm:flex-row items-center gap-space-md">
+                    <a class="w-full bg-surface-container-lowest text-primary px-space-lg py-space-md font-label-md text-label-md uppercase tracking-wider hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-colors text-center shadow-md flex items-center justify-center gap-space-xs font-semibold" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">
+                      <span class="material-symbols-outlined text-body-lg">chat</span>
+                      <span>Escribinos por WhatsApp</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: LUXURY TABULAR LEDGER / TABLA TÉCNICA -->
+      <section class="w-full bg-surface py-space-3xl px-gutter md:px-gutter-desktop border-b border-surface-variant/40">
+        <div class="max-w-[1400px] mx-auto flex flex-col gap-space-xl">
+          <div class="reveal-on-scroll max-w-2xl">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold block mb-space-xs">Elegí con calma</span>
+            <h3 class="font-headline-lg text-headline-lg md:text-[3rem] text-primary">¿Qué es lo que más te conviene hoy?</h3>
+          </div>
+          <div class="reveal-on-scroll delay-150 w-full overflow-x-auto border border-surface-variant/60 shadow-sm bg-surface-container-lowest">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-[#1B263A] text-on-primary border-b border-[#415A78]/30">
+                  <th class="p-space-md font-label-sm text-label-sm uppercase tracking-wider text-secondary-fixed">Lo que ofrecés</th>
+                  <th class="p-space-md font-label-sm text-label-sm uppercase tracking-wider text-[#bcc7e1]">A quién le sirve</th>
+                  <th class="p-space-md font-label-sm text-label-sm uppercase tracking-wider text-[#bcc7e1]">Lo que ganás</th>
+                  <th class="p-space-md font-label-sm text-label-sm uppercase tracking-wider text-[#bcc7e1]">Qué te dejamos listo</th>
+                  <th class="p-space-md font-label-sm text-label-sm uppercase tracking-wider text-right text-secondary-fixed">Hablemos</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-variant/50 text-on-surface">
+                <tr class="hover:bg-[#E0E1DC]/30 transition-colors group">
+                  <td class="p-space-md font-headline-sm text-headline-sm text-primary">Página para profesionales</td>
+                  <td class="p-space-md font-body-sm text-body-sm text-on-surface-variant">Psicólogos, profes, consultores</td>
+                  <td class="p-space-md font-body-sm text-body-sm font-medium">Tener presencia linda y que te pidan turnos por WhatsApp</td>
+                  <td class="p-space-md font-body-sm text-body-sm text-on-surface-variant">Tu página lista + botón de WhatsApp</td>
+                  <td class="p-space-md text-right">
+                    <a class="inline-block bg-primary text-surface px-space-md py-2 font-label-sm text-label-sm uppercase tracking-wider hover:bg-secondary transition-colors font-semibold" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">Preguntar</a>
+                  </td>
+                </tr>
+                <tr class="bg-surface-container-low/40 hover:bg-[#E0E1DC]/40 transition-colors group">
+                  <td class="p-space-md font-headline-sm text-headline-sm text-primary">Tienda Online para productos</td>
+                  <td class="p-space-md font-body-sm text-body-sm text-on-surface-variant">Ropa, accesorios, bazar, deco</td>
+                  <td class="p-space-md font-body-sm text-body-sm font-medium">Vender las 24 horas sin tener que responder precio a cada uno</td>
+                  <td class="p-space-md font-body-sm text-body-sm text-on-surface-variant">Tienda lista con pagos y envíos configurados</td>
+                  <td class="p-space-md text-right">
+                    <a class="inline-block bg-primary text-surface px-space-md py-2 font-label-sm text-label-sm uppercase tracking-wider hover:bg-secondary transition-colors font-semibold" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">Preguntar</a>
+                  </td>
+                </tr>
+                <tr class="hover:bg-[#E0E1DC]/30 transition-colors group">
+                  <td class="p-space-md font-headline-sm text-headline-sm text-primary">Poner en orden una tienda existente</td>
+                  <td class="p-space-md font-body-sm text-body-sm text-on-surface-variant">Negocios con muchos productos desordenados</td>
+                  <td class="p-space-md font-body-sm text-body-sm font-medium">Dejar todo prolijo para que tus clientes encuentren todo rápido</td>
+                  <td class="p-space-md font-body-sm text-body-sm text-on-surface-variant">Catálogo impecable y fácil de navegar</td>
+                  <td class="p-space-md text-right">
+                    <a class="inline-block bg-primary text-surface px-space-md py-2 font-label-sm text-label-sm uppercase tracking-wider hover:bg-secondary transition-colors font-semibold" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">Preguntar</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: DEEP MIDNIGHT NAVY FULL-WIDTH MANIFESTO FINALE -->
+      <section id="contacto" class="w-full bg-[#0E1B2A] text-on-primary py-space-3xl px-gutter md:px-gutter-desktop relative overflow-hidden border-t border-surface-variant/20">
+        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-size: 32px 32px; background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px);"></div>
+        <div class="reveal-on-scroll max-w-4xl mx-auto flex flex-col items-center text-center gap-space-lg relative z-10 py-space-xl">
+          <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary-fixed font-semibold">Estamos de tu lado</span>
+          <h2 class="font-headline-lg text-3xl sm:text-4xl md:text-5xl text-on-primary leading-tight font-serif italic max-w-3xl">
+            "Tener tu negocio en internet no tiene por qué ser difícil ni darte dolor de cabeza."
+          </h2>
+          <p class="font-body-lg text-body-lg text-[#bcc7e1] max-w-2xl leading-relaxed">
+            Dejanos darte una mano para ordenar todo. Te explicamos cada paso como a nosotros nos gustaría que nos lo expliquen: con paciencia, sin rodeos y con una sonrisa.
+          </p>
+          <div class="flex flex-col sm:flex-row items-center gap-space-md mt-space-md">
+            <a class="bg-surface-container-lowest text-primary px-space-xl py-space-md font-label-md text-label-md uppercase tracking-wider hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-all shadow-xl font-semibold hover:scale-105" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">
+              Hablemos de tu negocio por WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FLOATING INTERACTIVE CONSULTATION TRIGGER (Bottom Right) -->
+      <div id="floating-wa" class="fixed bottom-6 right-6 z-40 flex items-center group">
+        <a class="bg-[#0E1B2A] text-surface p-space-sm shadow-2xl flex items-center gap-space-sm hover:bg-[#415A78] transition-all border border-white/20 hover:shadow-[0_8px_30px_rgb(0,0,0,0.5)]" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">
+          <div class="w-10 h-10 bg-surface-container-lowest text-primary flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-body-lg group-hover:scale-110 transition-transform">chat</span>
+          </div>
+          <div class="pr-space-sm hidden md:flex flex-col text-left">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary-fixed font-semibold flex items-center gap-1.5">
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 status-pulse"></span>
+              Estamos online
+            </span>
+            <span class="font-body-sm text-body-sm font-medium text-surface">Hablemos por WhatsApp →</span>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- EDITORIAL BROADSHEET FOOTER -->
+  <footer class="w-full bg-[#0E1B2A] text-on-primary py-space-3xl border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-gutter md:px-gutter-desktop">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-space-xl pb-space-2xl border-b border-white/10">
+        <div class="md:col-span-5 flex flex-col gap-space-md">
+          <div class="flex flex-col">
+            <span class="font-headline-sm text-headline-sm text-on-primary uppercase font-serif tracking-wide">Avanzzia</span>
+            <span class="font-label-sm text-label-sm text-[#788DAA] uppercase tracking-widest text-[10px]">Hacemos fácil tu presencia online</span>
+          </div>
+          <p class="font-body-sm text-body-sm text-[#bcc7e1] max-w-sm leading-relaxed">
+            Ayudamos a personas con ganas de crecer a tener su tienda o página web ordenada, fácil de entender y sin complicaciones técnicas.
+          </p>
+        </div>
+        <div class="md:col-span-3 flex flex-col gap-space-sm">
+          <span class="font-label-sm text-label-sm text-[#788DAA] uppercase tracking-widest mb-space-xs font-semibold">Para conocer más</span>
+          <a class="font-body-sm text-body-sm text-on-primary hover:text-secondary-fixed transition-colors" href="#filosofia">Cómo trabajamos</a>
+          <a class="font-body-sm text-body-sm text-on-primary hover:text-secondary-fixed transition-colors" href="#metodologia">Paso a paso</a>
+          <a class="font-body-sm text-body-sm text-on-primary hover:text-secondary-fixed transition-colors" href="#servicios">Qué te ofrecemos</a>
+        </div>
+        <div class="md:col-span-4 flex flex-col gap-space-md">
+          <span class="font-label-sm text-label-sm text-[#788DAA] uppercase tracking-widest mb-space-xs font-semibold">¿Charlamos?</span>
+          <p class="font-body-sm text-body-sm text-[#bcc7e1]">Escribinos para contarnos sobre tu negocio. Te respondemos rápido y con la mejor onda.</p>
+          <a class="inline-flex items-center justify-center bg-[#1B263A] border border-white/15 text-inverse-on-surface px-space-md py-space-sm font-label-md text-label-md uppercase tracking-wider hover:bg-[#415A78] hover:text-on-primary transition-all w-fit shadow-sm" href="https://wa.link/pzk4xf" rel="noopener noreferrer" target="_blank">
+            Escribinos por WhatsApp
+          </a>
+        </div>
+      </div>
+      <div class="pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md text-[#788DAA]">
+        <span class="font-body-sm text-body-sm">© 2026 Avanzzia. Páginas y tiendas claras para que disfrutes tu negocio.</span>
+        <span class="font-label-sm text-label-sm uppercase tracking-wider text-[#788DAA]">Hecho con paciencia y dedicación</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT: FUNCTIONALITY, SMOOTH SCROLL, PARALLAX & SCROLL-TRIGGERED REVEALS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Reading Progress Bar on Scroll
+      const progressBar = document.getElementById('scroll-progress-bar');
+      const floatingWa = document.getElementById('floating-wa');
+      const header = document.getElementById('main-header');
+
+      const handleScroll = () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+        
+        if (progressBar) {
+          progressBar.style.width = `${progress}%`;
+        }
+
+        // Show/hide floating WhatsApp button
+        if (floatingWa) {
+          if (scrollTop > 220) {
+            floatingWa.classList.add('is-visible');
+          } else {
+            floatingWa.classList.remove('is-visible');
+          }
+        }
+
+        // Header shadow on scroll
+        if (header) {
+          if (scrollTop > 40) {
+            header.classList.add('shadow-xl', 'bg-[#0E1B2A]/98');
+          } else {
+            header.classList.remove('shadow-xl', 'bg-[#0E1B2A]/98');
+          }
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll();
+
+      // 2. IntersectionObserver for Scroll Animations (Reveal on scroll)
+      const revealElements = document.querySelectorAll(
+        '.reveal-on-scroll, .reveal-slide-left, .reveal-slide-right, .reveal-image, .reveal-pop'
+      );
+
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+      });
+
+      revealElements.forEach(el => revealObserver.observe(el));
+
+      // 3. Parallax Scroll Effect for Images
+      const parallaxImages = document.querySelectorAll('.parallax-img');
+      let ticking = false;
+
+      const updateParallax = () => {
+        const viewportHeight = window.innerHeight;
+        parallaxImages.forEach(img => {
+          const rect = img.parentElement.getBoundingClientRect();
+          // Check if parent container is in view
+          if (rect.top < viewportHeight && rect.bottom > 0) {
+            const speed = parseFloat(img.getAttribute('data-parallax-speed')) || 0.08;
+            const yOffset = (rect.top - viewportHeight / 2) * speed;
+            img.style.transform = `translateY(${yOffset}px) scale(1.06)`;
+          }
+        });
+        ticking = false;
+      };
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
+      }, { passive: true });
+      updateParallax();
+
+      // 4. Counter Animation for Stats
+      const statElements = document.querySelectorAll('.stat-counter');
+      let statsCounted = false;
+
+      const statsObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !statsCounted) {
+            statsCounted = true;
+            statElements.forEach(stat => {
+              const target = parseInt(stat.getAttribute('data-target'), 10);
+              const prefix = stat.getAttribute('data-prefix') || '';
+              const suffix = stat.getAttribute('data-suffix') || '';
+              if (isNaN(target)) return;
+
+              let start = 0;
+              const duration = 1200; // ms
+              const startTime = performance.now();
+
+              const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // easeOutQuad
+                const easeProgress = progress * (2 - progress);
+                const currentVal = Math.floor(easeProgress * target);
+                stat.textContent = `${prefix}${currentVal}${suffix}`;
+
+                if (progress < 1) {
+                  requestAnimationFrame(animate);
+                } else {
+                  stat.textContent = `${prefix}${target}${suffix}`;
+                }
+              };
+
+              requestAnimationFrame(animate);
+            });
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.5 });
+
+      const statsContainer = document.getElementById('stats-counter');
+      if (statsContainer) {
+        statsObserver.observe(statsContainer);
+      }
+
+      // 5. Active Navigation Highlighting on Scroll
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.nav-link');
+
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const currentId = entry.target.getAttribute('id');
+            navLinks.forEach(link => {
+              if (link.getAttribute('data-section') === currentId) {
+                link.classList.add('active-nav');
+              } else {
+                link.classList.remove('active-nav');
+              }
+            });
+          }
+        });
+      }, {
+        threshold: 0.35
+      });
+
+      sections.forEach(sec => sectionObserver.observe(sec));
+
+      // 6. Mobile Menu Drawer Toggle
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileNav = document.getElementById('mobile-nav');
+      const menuIcon = document.getElementById('menu-icon');
+
+      if (mobileMenuBtn && mobileNav) {
+        mobileMenuBtn.addEventListener('click', () => {
+          const isClosed = mobileNav.classList.contains('hidden');
+          if (isClosed) {
+            mobileNav.classList.remove('hidden');
+            mobileNav.classList.add('flex');
+            if (menuIcon) menuIcon.textContent = 'close';
+          } else {
+            mobileNav.classList.add('hidden');
+            mobileNav.classList.remove('flex');
+            if (menuIcon) menuIcon.textContent = 'menu';
+          }
+        });
+
+        // Close mobile menu on clicking any link
+        const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+        mobileLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            mobileNav.classList.add('hidden');
+            mobileNav.classList.remove('flex');
+            if (menuIcon) menuIcon.textContent = 'menu';
+          });
+        });
+      }
+
+      // 7. Smooth Scroll with Header Offset for Anchors
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            e.preventDefault();
+            const headerOffset = 80;
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
